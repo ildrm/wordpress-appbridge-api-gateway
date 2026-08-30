@@ -1,0 +1,56 @@
+openapi: 3.1.0
+info:
+  title: AppBridge API Gateway
+  version: 1.0.0
+  description: Versioned WordPress application API gateway.
+servers:
+  - url: /wp-json/appbridge/v1
+paths:
+  /bootstrap:
+    get:
+      summary: Get application bootstrap information
+      responses:
+        '200': { description: Bootstrap response }
+  /capabilities:
+    get:
+      summary: Discover gateway capabilities and integrations
+      responses:
+        '200': { description: Capabilities response }
+  /auth/login:
+    post:
+      summary: Authenticate and issue an opaque access/refresh token pair
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [login, password]
+              properties:
+                login: { type: string }
+                password: { type: string }
+                client_id: { type: string }
+      responses:
+        '200': { description: Authenticated }
+        '401': { description: Invalid credentials }
+  /auth/refresh:
+    post:
+      summary: Rotate a refresh token and issue a new token family
+      responses:
+        '200': { description: Refreshed }
+  /me:
+    get:
+      security: [{ bearerAuth: [] }]
+      summary: Get current user
+      responses:
+        '200': { description: Current user }
+    patch:
+      security: [{ bearerAuth: [] }]
+      summary: Update safe profile fields
+      responses:
+        '200': { description: Updated user }
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
